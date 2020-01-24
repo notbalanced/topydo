@@ -24,6 +24,7 @@ import sys
 
 from topydo.lib.Color import AbstractColor, Color
 from topydo.lib.TopydoString import TopydoString
+from topydo.commands.ArchiveCommand import ArchiveCommand
 
 MAIN_OPTS = "ac:C:d:ht:v"
 MAIN_LONG_OPTS = ('version')
@@ -33,6 +34,7 @@ GENERIC_HELP="""Available commands:
 
 * add
 * append (app)
+* archive
 * del (rm)
 * dep
 * depri
@@ -231,7 +233,6 @@ class CLIApplicationBase(object):
             self.backup.add_archive(archive)
 
         if archive:
-            from topydo.commands.ArchiveCommand import ArchiveCommand
             command = ArchiveCommand(self.todolist, archive)
             command.execute()
 
@@ -261,15 +262,20 @@ class CLIApplicationBase(object):
         """
         self._backup(p_command, p_args)
 
-        command = p_command(
-            p_args,
-            self.todolist,
-            output,
-            error,
-            input)
+        if p_command.name() != 'archive':
+            command = p_command(
+                p_args,
+                self.todolist,
+                output,
+                error,
+                input)
 
-        if command.execute() != False:
-            self._post_archive_action = command.execute_post_archive_actions
+            if command.execute() != False:
+                self._post_archive_action = command.execute_post_archive_actions
+                return True
+        else:
+            self.todolist.dirty = True;
+            self.do_archive = True;
             return True
 
         return False
@@ -290,7 +296,10 @@ class CLIApplicationBase(object):
                 archive = _retrieve_archive()[0]
                 self.backup.add_archive(archive)
 
-            self._post_archive_action()
+            try:
+                self._post_archive_action()
+            except TypeError:
+                pass
 
             if config().keep_sorted():
                 from topydo.commands.SortCommand import SortCommand
