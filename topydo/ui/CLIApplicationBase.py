@@ -262,6 +262,9 @@ class CLIApplicationBase(object):
         """
         self._backup(p_command, p_args)
 
+        if p_command == None:
+            usage()
+            return False
         if p_command.name() != 'archive':
             command = p_command(
                 p_args,
