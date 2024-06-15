@@ -215,7 +215,7 @@ class ListCommand(ExpressionCommand):
 [-i <NUMBER 1>[,<NUMBER 2> ...]] [-N | -n <INTEGER>] [EXPRESSION]"""
 
     def help(self):
-        return """\
+        return r"""\
 Lists all relevant todos. A todo is relevant when:
 
 * has not been completed yet,
@@ -256,8 +256,8 @@ When an EXPRESSION is given, only the todos matching that EXPRESSION are shown.
          %P: Priority or placeholder space if no priority.
          %s: Todo text.
          %S: Todo text, truncated such that an item fits on one line.
-         %t: Absolute creation date.
-         %T: Relative creation date.
+         %t: Absolute start date.
+         %T: Relative start date.
          %u: Todo's text-based ID.
          %U: Todo's text-based ID padded with spaces.
          %x: 'x' followed by absolute completion date.
